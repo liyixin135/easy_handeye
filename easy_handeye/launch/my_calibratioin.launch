@@ -1,0 +1,36 @@
+<launch>
+    <arg name="namespace_prefix" default="camera_calibration"/>
+    <arg name="eye_on_hand" default="true"/>
+    <arg if="$(arg eye_on_hand)" name="namespace" value="$(arg namespace_prefix)_eye_on_hand"/>
+    <arg name="start_sampling_gui" value="true"/>
+    <arg name="freehand_robot_movement" default="true"/>
+    <arg name="robot_base_frame" default="base_link"/>
+    <arg name="robot_effector_frame" default="pitch"/>
+    <arg name="tracking_base_frame" default="camera_optical_frame"/>
+    <arg name="tracking_marker_frame" default="calibrate_tag"/>
+    <arg name="move_group_namespace" default="/"/>
+    <arg name="move_group" default="manipulator"/>
+
+    <group ns="$(arg namespace)">
+        <param name="eye_on_hand" value="$(arg eye_on_hand)"/>
+        <param name="move_group_namespace" value="$(arg move_group_namespace)"/>
+        <param name="move_group" value="$(arg move_group)"/>
+        <param name="robot_base_frame" value="$(arg robot_base_frame)"/>
+        <param name="robot_effector_frame" value="$(arg robot_effector_frame)"/>
+        <param name="tracking_base_frame" value="$(arg tracking_base_frame)"/>
+        <param name="tracking_marker_frame" value="$(arg tracking_marker_frame)"/>
+        <param name="freehand_robot_movement" value="$(arg freehand_robot_movement)"/>
+
+        <node name="easy_handeye_calibration_server"
+              pkg="easy_handeye"
+              type="calibrate.py"
+              output="screen"/>
+
+        <node if="$(arg start_sampling_gui)" name="$(anon namespace)_rqt" pkg="rqt_easy_handeye" type="rqt_easy_handeye"
+              respawn="false" output="screen"/>
+    </group>
+
+    <!-- start rviz-->
+    <node pkg="rviz" type="rviz" name="calibrate_rviz" output="screen"/>
+
+</launch>
